@@ -6,11 +6,13 @@ Adding rounds, scores buttons
 
 import tkinter as tk
 import random
+import winsound
 from tkinter import messagebox
 
 COLORS = ["red", "green", "blue", "yellow"]
 FLASH_DELAY = 500
 ROUND_DELAY = 1000
+SOUNDS = {"red": 440, "green": 494, "blue": 523, "yellow": 587}
 
 
 class SimonGame:
@@ -91,6 +93,10 @@ class SimonGame:
         btn = self.buttons[color]
         original = btn["bg"]
         btn.config(bg="white")
+        try:
+            winsound.Beep(SOUNDS[color], 200)
+        except Exception:
+            pass
         self.master.after(250, lambda: btn.config(bg=original))
 
     def enable_buttons(self):
@@ -105,15 +111,13 @@ class SimonGame:
     def user_click(self, color):
         self.user_sequence.append(color)
         self.flash_button(color)
-
         index = len(self.user_sequence) - 1
         if self.user_sequence[index] != self.sequence[index]:
             self.game_over()
             return
-
         if len(self.user_sequence) == len(self.sequence):
             self.disable_buttons()
-            self.message_label.config(text="Good job!")
+            self.message_label.config(text="Nice!")
             self.master.after(ROUND_DELAY, self.next_round)
 
     def game_over(self):
